@@ -16,6 +16,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
+from django.contrib.sites.models import Site
 
 from models import MsgReply, EventReply
 from models import Config
@@ -44,7 +45,8 @@ class Weixin(View):
     def handle_msg(self, soup):
         all = MsgReply.objects.filter(is_valid=True)
         if soup.msgtype.text == 'text':
-            reply = all.filter(rcvd_msg_type=soup.msgtype.text, rcvd_msg_content=soup.content.text.strip().lower()) or all.filter(rcvd_msg_type='all')
+            reply = all.filter(rcvd_msg_type=soup.msgtype.text,
+                               rcvd_msg_content=soup.content.text.strip().lower()) or all.filter(rcvd_msg_type='all')
         else:
             reply = all.filter(rcvd_msg_type='all')
 
@@ -55,6 +57,7 @@ class Weixin(View):
                 'from_user': soup.tousername.text,
                 'create_time': int(time.time()),
                 'reply': reply,
+                'site': Site.objects.get_current()
             }
             rendered = render_to_string('xml/message.xml', context)
             return HttpResponse(rendered)
@@ -73,6 +76,7 @@ class Weixin(View):
                 'from_user': soup.tousername.text,
                 'create_time': int(time.time()),
                 'reply': reply,
+                'site': Site.objects.get_current()
             }
             rendered = render_to_string('xml/message.xml', context)
             return HttpResponse(rendered)

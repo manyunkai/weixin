@@ -34,9 +34,9 @@
 		<Title>{{ item.title }}</Title> 
 		<Description>{{ item.description }}</Description>
 		{% if forloop.first %}
-			<PicUrl>{{ item.pic_large.url }}</PicUrl>
+			<PicUrl>http://{{ site.domain }}/{{ item.pic_large.url }}</PicUrl>
 		{% else %}
-			<PicUrl>{{ item.pic_small.url }}</PicUrl>
+			<PicUrl>http://{{ site.domain }}/{{ item.pic_small.url }}</PicUrl>
 		{% endif %}
 		<Url>{{ item.url }}</Url>
 		</item>

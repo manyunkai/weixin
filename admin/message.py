@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 
 from weixin.models import MsgReply, TextMsg, NewsMsg, NewsMsgItem, EventReply
 from weixin.forms import NewsMsgItemForm, TextMsgForm
+from weixin.models.message import NewsMsgItemMapping
 
 
 class MsgReplyAdmin(admin.ModelAdmin):
@@ -23,6 +24,7 @@ class MsgReplyAdmin(admin.ModelAdmin):
     }
 
     def save_model(self, request, obj, form, change):
+        print form.cleaned_data.get('items')
         obj.res_msg_type = obj.msg_object_content_type.model[:-3]
         obj.save()
 
@@ -39,9 +41,13 @@ class TextMsgAdmin(admin.ModelAdmin):
     form = TextMsgForm
 
 
+class MsgItemsInline(admin.TabularInline):
+    model = NewsMsgItemMapping
+
+
 class NewsMsgAdmin(admin.ModelAdmin):
     list_display = ['name', 'news']
-    filter_horizontal = ['items']
+    inlines = [MsgItemsInline]
 
     def news(self, obj):
         return u', '.join([item.title for item in obj.items.all()])

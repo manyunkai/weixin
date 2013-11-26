@@ -70,6 +70,7 @@ class NewsMsg(models.Model):
     name = models.CharField(u'显示名称', max_length=30,
                             help_text=u'该名称仅用于列表显示')
     items = models.ManyToManyField(NewsMsgItem, verbose_name=u'图文消息',
+                                   through='NewsMsgItemMapping',
                                    help_text=u'消息主体，最多支持10个。')
 
     def __unicode__(self):
@@ -79,6 +80,22 @@ class NewsMsg(models.Model):
         app_label = 'weixin'
         verbose_name = u'图文消息'
         verbose_name_plural = u'图文消息'
+
+
+class NewsMsgItemMapping(models.Model):
+    newsmsg = models.ForeignKey(NewsMsg)
+    newsmsgitem = models.ForeignKey(NewsMsgItem, verbose_name=u'消息')
+    position = models.IntegerField(default=1, verbose_name=u'排序')
+
+    def __unicode__(self):
+        return '{0} --> {1}'.format(self.newsmsg, self.newsmsgitem)
+
+    class Meta:
+        app_label = 'weixin'
+        db_table = 'weixin_newsmsg_items'
+        ordering = ['position']
+        verbose_name = u'图文消息关联'
+        verbose_name_plural = u'图文消息关联'
 
 
 class TextMsg(models.Model):
@@ -96,7 +113,7 @@ class TextMsg(models.Model):
         verbose_name_plural = u'文字消息'
 
 
-msg_limit = models.Q(app_label='msg', model='textmsg') | models.Q(app_label='msg', model='newsmsg')
+msg_limit = models.Q(app_label='weixin', model='textmsg') | models.Q(app_label='weixin', model='newsmsg')
 
 
 class MsgReply(models.Model):
