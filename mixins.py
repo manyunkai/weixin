@@ -12,7 +12,8 @@ import json
 import time
 
 from django.core.cache import cache
-from models import Config
+
+from weixin.models import Config
 
 
 class ConnectionFailed(BaseException):
