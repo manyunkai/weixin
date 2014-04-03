@@ -16,10 +16,8 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
-from django.contrib.sites.models import Site
 
-from models import MsgReply, EventReply
-from models import Config
+from models import EventReplyRule, Keyword, Config
 
 
 class Weixin(View):
@@ -42,41 +40,51 @@ class Weixin(View):
 
         return False
 
-    def handle_msg(self, soup):
-        all = MsgReply.objects.filter(is_valid=True)
-        if soup.msgtype.text == 'text':
-            reply = all.filter(rcvd_msg_type=soup.msgtype.text,
-                               rcvd_msg_content=soup.content.text.strip().lower()) or all.filter(rcvd_msg_type='all')
-        else:
-            reply = all.filter(rcvd_msg_type='all')
+    def _get_reply(self, txt):
+        txt, obj = txt.lower(), None
+        for k in Keyword.get_exact_keywords():
+            k = unicode(k, encoding='utf8')
+            if k == txt:
+                obj = Keyword.objects.filter(name=k)
+                obj = obj[0] if obj else None
+        if not obj:
+            for k in Keyword.get_iexact_keywords():
+                k = unicode(k, encoding='utf8')
+                if k in txt:
+                    obj = Keyword.objects.filter(name=k)
+                    obj = obj[0] if obj else None
+        return obj.rule if obj and obj.rule.is_valid else None
 
-        if reply.exists():
-            reply = reply[0]
+    def handle_msg(self, soup):
+        if soup.MsgType.text == 'text':
+            txt = soup.Content.text or ''
+            reply = self._get_reply(txt.lower())
+
+        if reply:
             context = {
-                'to_user': soup.fromusername.text,
-                'from_user': soup.tousername.text,
+                'to_user': soup.FromUserName.text,
+                'from_user': soup.ToUserName.text,
                 'create_time': int(time.time()),
                 'reply': reply,
-                'site': Site.objects.get_current()
             }
+            print context
             rendered = render_to_string('xml/message.xml', context)
             return HttpResponse(rendered)
 
         return HttpResponse('')
 
     def handle_event(self, soup):
-        all = EventReply.objects.filter(is_valid=True)
-        reply = all.filter(event_type=soup.event.text,
-                           event_key=soup.eventkey and soup.eventkey.text or '')
+        all = EventReplyRule.objects.filter(is_valid=True)
+        reply = all.filter(event_type=soup.Event.text,
+                           event_key=soup.EventKey and soup.EventKey.text and not soup.Event.text == 'subscribe' or '')
 
         if reply.exists():
             reply = reply[0]
             context = {
-                'to_user': soup.fromusername.text,
-                'from_user': soup.tousername.text,
+                'to_user': soup.FromUserName.text,
+                'from_user': soup.ToUserName.text,
                 'create_time': int(time.time()),
                 'reply': reply,
-                'site': Site.objects.get_current()
             }
             rendered = render_to_string('xml/message.xml', context)
             return HttpResponse(rendered)
@@ -90,14 +98,14 @@ class Weixin(View):
         raise PermissionDenied
 
     def post(self, request):
-        if not self.validate(request):
-            raise PermissionDenied
+#         if not self.validate(request):
+#             raise PermissionDenied
 
-        soup = BeautifulSoup(request.body)
-        if soup.msgtype:
-            if soup.msgtype.text in ['text', 'image', 'voice', 'video', 'location', 'link']:
+        soup = BeautifulSoup(request.body, features='xml')
+        if soup.MsgType:
+            if soup.MsgType.text in ['text', 'image', 'voice', 'video', 'location', 'link']:
                 return self.handle_msg(soup)
-            elif soup.msgtype.text == 'event':
+            elif soup.MsgType.text == 'event':
                 return self.handle_event(soup)
 
         return HttpResponse('')

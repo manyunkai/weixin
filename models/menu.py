@@ -8,11 +8,13 @@ DannyWork Project
 
 from django.db import models
 
+from django.contrib.auth.models import User
+
 
 BUTTON_TYPE = (
     ('click', 'click'),
     ('view', 'view'),
-    ('', 'parent')
+    ('', u'父级菜单')
 )
 
 
