@@ -19,21 +19,21 @@ connection = redis.Redis()
 
 
 RCVD_MSG_TYPE = (
-    ('text', '文本消息'),
-#     ('image', '图片消息'),
-#     ('voice', '语音消息'),
-#     ('video', '视频消息'),
-#     ('location', '地理位置消息'),
-    ('all', '所有消息')
+    ('text', u'文本消息'),
+#     ('image', u'图片消息'),
+#     ('voice', u'语音消息'),
+#     ('video', u'视频消息'),
+#     ('location', u'地理位置消息'),
+    ('all', u'所有消息')
 )
 
 RES_MSG_TYPE = (
-    ('text', '文本消息'),
-#     ('image', '图片消息'),
-    ('voice', '语音消息'),
-#     ('video', '视频消息'),
-#     ('music', '音乐消息'),
-    ('news', '图文消息'),
+    ('text', u'文本消息'),
+#     ('image', u'图片消息'),
+    ('voice', u'语音消息'),
+#     ('video', u'视频消息'),
+#     ('music', u'音乐消息'),
+    ('news', u'图文消息'),
 )
 
 
@@ -150,7 +150,7 @@ class NewsMsgItemMapping(models.Model):
     position = models.IntegerField(default=1, verbose_name=u'排序')
 
     def __unicode__(self):
-        return '{0} --> {1}'.format(self.newsmsg, self.newsmsgitem)
+        return u'{0} --> {1}'.format(self.newsmsg, self.newsmsgitem)
 
     class Meta:
         app_label = 'weixin'
@@ -277,9 +277,9 @@ pre_delete.connect(keyword_pre_delete, sender=Keyword)
 
 
 EVENT_TYPE = (
-    ('subscribe', '订阅'),
-    ('unsubscribe', '取消订阅'),
-    ('CLICK', '菜单点击'),
+    ('subscribe', u'订阅'),
+    ('unsubscribe', u'取消订阅'),
+    ('CLICK', u'菜单点击'),
 )
 
 
