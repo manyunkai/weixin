@@ -1,16 +1,16 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-21
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 from django.contrib import admin
 from django.http.response import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from weixin.models import Config
+from ..models import Config
 
 
 class ConfigAdmin(admin.ModelAdmin):

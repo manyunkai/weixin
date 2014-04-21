@@ -1,17 +1,17 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-20
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 from django.contrib import admin, messages
 from django.http.response import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from weixin.models import Button, Config
-from weixin.mixins import PullMenu, PushMenu
+from ..models import Button, Config
+from ..mixins import PullMenu, PushMenu
 
 
 class ButtonAdmin(admin.ModelAdmin):

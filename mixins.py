@@ -1,10 +1,10 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-18
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 import urllib
 import httplib
@@ -13,7 +13,7 @@ import time
 
 from django.core.cache import cache
 
-from weixin.models import Config
+from .models import Config
 
 
 class ConnectionFailed(BaseException):

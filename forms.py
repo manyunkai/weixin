@@ -1,17 +1,17 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-21
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 import os
 
 from django import forms
 
-from models import NewsMsgItem, TextMsg
-from models.message import MediaItem
+from .models import NewsMsgItem, TextMsg
+from .models import MediaItem
 #from utils import magic
 
 

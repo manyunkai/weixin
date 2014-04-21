@@ -1,18 +1,18 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-20
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 
-from weixin.models import TextMsg, NewsMsg, NewsMsgItem,\
+from ..models import TextMsg, NewsMsg, NewsMsgItem,\
     NewsMsgItemMapping, Keyword, EventReplyRule, MsgReplyRule, MediaMsg,\
     MediaItem
-from weixin.forms import NewsMsgItemForm, TextMsgForm, MediaItemForm
+from ..forms import NewsMsgItemForm, TextMsgForm, MediaItemForm
 
 
 class MsgAdminBase(admin.ModelAdmin):

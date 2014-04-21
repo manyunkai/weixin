@@ -1,10 +1,10 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-18
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 import hashlib
 import time
@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
 
-from models import EventReplyRule, Keyword, Config
+from .models import EventReplyRule, Keyword, Config
 
 
 class Weixin(View):

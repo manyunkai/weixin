@@ -1,10 +1,10 @@
 # -*-coding:utf-8 -*-
-'''
+"""
 Created on 2013-11-20
 
 @author: Danny
 DannyWork Project
-'''
+"""
 
 import uuid
 import os
@@ -154,7 +154,7 @@ class NewsMsgItemMapping(models.Model):
 
     class Meta:
         app_label = 'weixin'
-        db_table = 'msg_newsmsg_items'
+        db_table = 'weixin_msg_newsmsg_items'
         ordering = ['position']
         verbose_name = u'图文消息关联'
         verbose_name_plural = u'图文消息关联'
@@ -258,18 +258,18 @@ def keyword_pre_save(sender, **kwargs):
     except Keyword.DoesNotExist:
         pass
     else:
-        connection.srem(_get_cache_key(prev), prev.name)
+        connection.srem(_get_cache_key(prev), prev.name.lower())
 
 
 def keyword_post_save(sender, **kwargs):
     instance = kwargs.get('instance')
-    connection.sadd(_get_cache_key(instance), instance.name)
+    connection.sadd(_get_cache_key(instance), instance.name.lower())
 
 
 def keyword_pre_delete(sender, **kwargs):
     instance = kwargs.get('instance')
     if not Keyword.objects.filter(name=instance.name, exact_match=instance.exact_match).exclude(id=instance.id).exists():
-        connection.srem(_get_cache_key(instance), instance.name)
+        connection.srem(_get_cache_key(instance), instance.name.lower())
 
 pre_save.connect(keyword_pre_save, sender=Keyword)
 post_save.connect(keyword_post_save, sender=Keyword)
